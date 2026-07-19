@@ -17,6 +17,15 @@ ExecStart=__INSTALL_DIR__/continuwuity --config __INSTALL_DIR__/continuwuity.tom
 Restart=on-failure
 RestartSec=5
 
+# Timeouts and restart rate limit, matching upstream pkg/conduwuit.service.
+# RocksDB can take a while to open a large database on first start (e.g.
+# after a restore or upgrade); the systemd default 90s start timeout would
+# cause a spurious failure in that case.
+TimeoutStopSec=4m
+TimeoutStartSec=10m
+StartLimitInterval=1m
+StartLimitBurst=5
+
 # Sandboxing options to harden security.
 # Details: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 NoNewPrivileges=yes
