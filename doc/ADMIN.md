@@ -24,6 +24,25 @@ sudo systemctl start continuwuity.service
 Continuwuity also supports RocksDB online backups via the
 `database_backup_path` config option — see the upstream maintenance docs.
 
+## Upload size limit
+
+This package sets `max_request_size = 104857600` (100 MiB) in
+`continuwuity.toml`, with a matching `client_max_body_size 100M` in the
+nginx conf. This is **larger than the upstream default of 20 MiB**, chosen
+so users can upload larger files/media via Matrix clients. To change it,
+edit both values and keep them in sync:
+
+```bash
+sudo yunohost app config edit continuwuity   # edit max_request_size in the toml
+sudo nano /etc/nginx/conf.d/$domain.d/continuwuity.conf   # edit client_max_body_size
+sudo systemctl reload nginx && sudo systemctl restart continuwuity
+```
+
+Note that on the next package upgrade, manual edits to
+`continuwuity.toml` are preserved (YunoHost checksum-protected), so the
+change will stick — but you'll also miss out on any new upstream defaults
+in the same file.
+
 ## Upstream documentation
 
 - Configuration reference: <https://continuwuity.org/configuration.html>
