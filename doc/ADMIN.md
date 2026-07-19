@@ -34,7 +34,8 @@ edit both values and keep them in sync:
 
 ```bash
 sudo yunohost app config edit continuwuity   # edit max_request_size in the toml
-sudo nano /etc/nginx/conf.d/$domain.d/continuwuity.conf   # edit client_max_body_size
+# Replace <your-domain> below with the install domain of this app:
+sudo nano /etc/nginx/conf.d/<your-domain>.d/continuwuity.conf   # edit client_max_body_size
 sudo systemctl reload nginx && sudo systemctl restart continuwuity
 ```
 
