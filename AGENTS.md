@@ -94,6 +94,13 @@ When a new Continuwuity release comes out (e.g. `v27.0.0`):
    - sections like `[global.well_known]`, `[global.smtp]`, `[global.oauth]`
      that this package intentionally leaves disabled — make sure they are
      still disabled the same way.
+   - Also bump the literal version string in the comment header of
+     `conf/continuwuity.toml` (the line starting with
+     `# Generated from conduwuit-example.toml of continuwuity vX.Y.Z`).
+     It's a comment, not a template token — do NOT use a `__UPSTREAM_VERSION__`
+     placeholder, that breaks `ynh_config_add` (see commit history for the
+     bug where it aborted installs with "Variable $upstream_version wasn't
+     initialized").
 
 6. **Diff `pkg/conduwuit.service`** (the upstream systemd unit) against
    `conf/systemd.service`. Upstream sometimes adds new sandboxing options
