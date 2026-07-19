@@ -22,6 +22,11 @@ services = ["__APP__"]
         ask.fr = "Jeton d'inscription"
         type = "string"
         readonly = true
+        # Read-only display backed by the get__registration_token() getter in
+        # scripts/config (reads from the app setting). bind = "null" makes the
+        # intent explicit so the core doesn't try to auto-resolve a backing
+        # file/setting and so no YunoHost version warns about a missing bind.
+        bind = "null"
         help.en = "Token new users must provide to register. Generated automatically. To rotate, run `yunohost app config set '$app' -f registration_token -v \"$(openssl rand -hex 16)\"` (or use `!admin token` from the admin room)."
         help.fr = "Jeton que les nouveaux utilisateurs doivent fournir pour s'inscrire. Généré automatiquement. Pour le renouveler, utilisez `!admin token` depuis le salon admin."
 
