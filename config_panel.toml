@@ -1,0 +1,39 @@
+version = "1.0"
+
+[main]
+name = "Continuwuity configuration"
+services = ["__APP__"]
+
+    [main.registration]
+    name = "User registration"
+
+        [main.registration.allow_registration]
+        ask.en = "Allow registration?"
+        ask.fr = "Autoriser l'inscription ?"
+        type = "boolean"
+        yes = "true"
+        no = "false"
+        help.en = "If enabled, new users can register using the registration token. If disabled, only the admin can create accounts (via the admin room)."
+        help.fr = "Si activé, les nouveaux utilisateurs peuvent s'inscrire avec le jeton d'inscription. Si désactivé, seul l'admin peut créer des comptes (depuis le salon admin)."
+        bind = "allow_registration:__INSTALL_DIR__/continuwuity.toml"
+
+        [main.registration.registration_token]
+        ask.en = "Registration token"
+        ask.fr = "Jeton d'inscription"
+        type = "string"
+        readonly = true
+        help.en = "Token new users must provide to register. Generated automatically. To rotate, run `yunohost app config set '$app' -f registration_token -v \"$(openssl rand -hex 16)\"` (or use `!admin token` from the admin room)."
+        help.fr = "Jeton que les nouveaux utilisateurs doivent fournir pour s'inscrire. Généré automatiquement. Pour le renouveler, utilisez `!admin token` depuis le salon admin."
+
+    [main.federation]
+    name = "Federation"
+
+        [main.federation.allow_federation]
+        ask.en = "Allow federation"
+        ask.fr = "Autoriser la fédération"
+        type = "boolean"
+        yes = "true"
+        no = "false"
+        help.en = "Communicate with other homeservers of the Matrix federation. Requires port 443 to be reachable from the internet."
+        help.fr = "Communiquer avec les autres serveurs de la fédération Matrix. Nécessite que le port 443 soit joignable depuis internet."
+        bind = "allow_federation:__INSTALL_DIR__/continuwuity.toml"

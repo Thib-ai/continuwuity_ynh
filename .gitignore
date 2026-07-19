@@ -1,0 +1,14 @@
+# Vendored upstream sources & reference YunoHost app packages / docs — only
+# used as local reference material while developing this package. Do NOT
+# commit them.
+/continuwuity/
+/yunohost-doc-reference/
+/conduit_ynh/
+/synapse_ynh/
+/tuwunel_ynh/
+
+# package_linter cache files (downloaded schemas & license list)
+/.config_panel.v1.schema.json
+/.manifest.v2.schema.json
+/.tests.v1.schema.json
+/.spdx_licenses

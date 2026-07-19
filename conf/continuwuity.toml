@@ -1,0 +1,64 @@
+# =============================================================================
+#  Continuwuity configuration (managed by YunoHost)
+#  Do not edit by hand — use the YunoHost config panel or `yunohost app config`.
+#  Manual edits will be preserved on upgrade only if the file checksum changes,
+#  in which case the new upstream defaults will NOT be applied automatically.
+#  Generated from conduwuit-example.toml of continuwuity v__UPSTREAM_VERSION__.
+# =============================================================================
+
+[global]
+
+# The server_name is the pretty name of this server. It is used as a
+# suffix for user and room IDs/aliases.
+# YOU NEED TO EDIT THIS. THIS CANNOT BE CHANGED AFTER WITHOUT A DATABASE WIPE.
+server_name = "__SERVER_NAME__"
+
+# The only directory where continuwuity will save its data, including media.
+database_path = "__DATA_DIR__"
+
+# The default address (IPv4 or IPv6) continuwuity will listen on.
+# Reverse proxy (nginx) runs on the same host, so bind to localhost only.
+address = ["127.0.0.1", "::1"]
+
+# The port continuwuity will listen on. Nginx proxies /_matrix here.
+port = __PORT__
+
+# Max request size for file uploads (bytes). Match client_max_body_size in nginx.
+max_request_size = 104857600
+
+# Enables registration. If false, no users can register on this server.
+# If true, also requires `registration_token` below (no open registration).
+allow_registration = __ALLOW_REGISTRATION__
+
+# A static registration token that new users must provide when creating an
+# account. Generated at install time. Use `!admin token` to manage additional
+# tokens at runtime.
+registration_token = "__REGISTRATION_TOKEN__"
+
+# controls whether federation is allowed or not. defaults to true.
+allow_federation = __ALLOW_FEDERATION__
+
+# Controls whether users are allowed to create rooms. Default true.
+# appservices and admins are always allowed to create rooms.
+# allow_room_creation = true
+
+# Log to journald (the systemd unit sets CONTINUWUITY_LOG_TO_JOURNALD=true).
+# This is the log filter, not a log destination.
+# Defaults to "info" on release builds.
+#log = "info"
+
+# Allow search engines and crawlers to index Continuwuity's built-in webpages
+# served under the `/_continuwuity/` prefix. Disabled for privacy.
+#allow_web_indexing = false
+
+# Continuwuity admin console / CLI. YunoHost manages the service via systemd,
+# so the automatic console is disabled. Use `!admin` commands from the admin
+# room, or `journalctl -u __APP__.service` for logs.
+admin_console_automatic = false
+
+# Continuwuity can serve .well-known delegation itself, but YunoHost serves
+# these via nginx (see /etc/nginx/conf.d/$server_name.d/__APP___server_name.conf).
+# Leave this section disabled.
+#[global.well_known]
+#server = "__DOMAIN__:443"
+#client = "https://__DOMAIN__"

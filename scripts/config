@@ -1,0 +1,66 @@
+#!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS / CONTEXT
+#=================================================
+
+install_dir=$(ynh_app_setting_get --key=install_dir)
+
+#=================================================
+# SPECIFIC GETTERS / SETTERS FOR TOML-BOUND KEYS
+#=================================================
+# The config panel binds `allow_registration` and `allow_federation` directly
+# to the TOML file. That's fine when the panel writes literal TOML booleans,
+# but the values in app settings may be "0"/"1" (from the boolean install
+# questions) or "true"/"false" (from a previous panel write). We need the
+# TOML file to always contain literal `true`/`false`, and we keep the app
+# setting in sync.
+
+# `bind` already handles reading from / writing to the TOML file for these
+# two keys, so we only need to (re)normalise the app setting after a write.
+
+set__allow_registration() {
+    # $allow_registration is the new value chosen in the panel
+    case "$allow_registration" in
+        1|true|True|TRUE) allow_registration="true" ;;
+        *) allow_registration="false" ;;
+    esac
+    ynh_app_setting_set --key=allow_registration --value="$allow_registration"
+
+    # If registration was just enabled but no token is set, generate one.
+    if [ "$allow_registration" = "true" ]; then
+        local current_token
+        current_token=$(ynh_app_setting_get --key=registration_token)
+        if [ -z "$current_token" ]; then
+            current_token=$(ynh_string_random --length=27)
+            ynh_app_setting_set --key=registration_token --value="$current_token"
+            # Write it to the TOML file too.
+            ynh_write_var_in_file --file="$install_dir/continuwuity.toml" \
+                --key=registration_token --value="\"$current_token\""
+        fi
+    fi
+}
+
+set__allow_federation() {
+    case "$allow_federation" in
+        1|true|True|TRUE) allow_federation="true" ;;
+        *) allow_federation="false" ;;
+    esac
+    ynh_app_setting_set --key=allow_federation --value="$allow_federation"
+}
+
+# Expose the current registration token in the panel (read-only display).
+get__registration_token() {
+    echo "$(ynh_app_setting_get --key=registration_token)"
+}
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+ynh_app_config_run $1

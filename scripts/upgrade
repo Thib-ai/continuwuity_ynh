@@ -1,0 +1,69 @@
+#!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Stopping $app's systemd service..."
+
+ynh_systemctl --service="$app" --action="stop" --log_path="systemd"
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression "Upgrading source files..."
+
+# Keep the admin's config across the upgrade (checksum-protected by ynh_config_add).
+ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="continuwuity.toml"
+
+chown -R "$app:root" "$install_dir"
+chmod +x "$install_dir/continuwuity"
+
+#=================================================
+# UPDATE A CONFIG FILE
+#=================================================
+# ynh_config_add will back up the admin's modified config (checksum mismatch)
+# before overwriting, so upstream defaults can be propagated safely.
+ynh_script_progression "Updating $app's configuration files..."
+
+ynh_config_add --template="continuwuity.toml" --destination="$install_dir/continuwuity.toml"
+
+chmod 400 "$install_dir/continuwuity.toml"
+chown "$app:$app" "$install_dir/continuwuity.toml"
+
+#=================================================
+# REAPPLY SYSTEM CONFIGURATIONS
+#=================================================
+ynh_script_progression "Upgrading system configurations related to $app..."
+
+ynh_config_add_nginx
+
+# Recreate .well-known delegation on the server_name domain.
+if yunohost --output-as plain domain list | grep -q "^$server_name$"; then
+    ynh_config_add --template="server_name.conf" \
+        --destination="/etc/nginx/conf.d/${server_name}.d/${app}_server_name.conf"
+fi
+
+ynh_config_add_systemd
+
+yunohost service add "$app" \
+    --description="Continuwuity Matrix homeserver" \
+    --log="systemd"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting $app's systemd service..."
+
+ynh_systemctl --service="$app" --action="start" --log_path="systemd"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+ynh_script_progression "Upgrade of $app completed"

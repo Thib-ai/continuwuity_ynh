@@ -1,0 +1,111 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "continuwuity"
+name = "Continuwuity"
+description.en = "Community-driven Matrix homeserver in Rust, continuation of conduwuit"
+description.fr = "Serveur Matrix écrit en Rust, continuation de conduwuit, maintenue par la communauté"
+
+version = "26.6.2~ynh1"
+
+maintainers = ["thibaultmol"]
+
+[upstream]
+license = "Apache-2.0"
+website = "https://continuwuity.org/"
+admindoc = "https://continuwuity.org/"
+userdoc = "https://continuwuity.org/"
+code = "https://forgejo.ellis.link/continuwuation/continuwuity"
+
+[integration]
+yunohost = ">= 12.0"
+helpers_version = "2.1"
+architectures = ["amd64", "arm64"]
+multi_instance = true
+ldap = "not_relevant"
+sso = "not_relevant"
+disk = "200M"
+ram.build = "50M"
+ram.runtime = "200M"
+
+[install]
+    [install.domain]
+    type = "domain"
+    help.en = "Continuwuity must be installed on a dedicated root domain (e.g. matrix.example.tld). It serves both the client-server API and the federation endpoints, and publishes .well-known/matrix delegation so that the server_name can be the same as this domain."
+    help.fr = "Continuwuity doit être installé sur un domaine racine dédié (ex. matrix.example.tld). Il sert l'API client-serveur et la fédération, et publie la délégation .well-known/matrix pour que le server_name soit ce domaine."
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+    help.en = "If you want to be able to federate with other servers, you must leave the default choice (visitors)."
+    help.fr = "Si vous souhaitez pouvoir fédérer votre serveur avec d'autres, vous devez laisser le choix par défaut (visiteurs)."
+
+    [install.server_name]
+    ask.en = "Select the display name for your Continuwuity server"
+    ask.fr = "Sélectionnez le nom d'affichage pour votre serveur Continuwuity"
+    help.en = "This is the server_name used in Matrix user-ids (e.g. @user:server_name). If you choose the install domain here, your user-ids will be @user:matrix.example.tld. If you choose the base domain (e.g. example.tld) and that domain is managed by this YunoHost instance, Continuwuity will publish .well-known delegation so user-ids look like @user:example.tld. This CANNOT be changed later without wiping the database."
+    help.fr = "C'est le server_name utilisé dans les identifiants Matrix (ex. @utilisateur:server_name). Si vous choisissez le domaine d'installation ici, vos identifiants seront @utilisateur:matrix.example.tld. Si vous choisissez le domaine de base (ex. example.tld) et qu'il est géré par cette instance YunoHost, Continuwuity publiera la délégation .well-known pour que les identifiants soient @utilisateur:example.tld. Cela NE PEUT PAS être changé ultérieurement sans réinitialiser la base de données."
+    type = "domain"
+
+    [install.registration]
+    ask.en = "Allow account registration?"
+    ask.fr = "Autoriser la création de comptes ?"
+    help.en = "If enabled, a registration token will be generated and shown after installation. New users will need it to register. If disabled, only the admin can create accounts (via the admin room)."
+    help.fr = "Si activé, un jeton d'inscription sera généré et affiché après l'installation. Les nouveaux utilisateurs en auront besoin pour s'inscrire. Si désactivé, seul l'admin peut créer des comptes (depuis le salon admin)."
+    type = "boolean"
+    default = true
+
+    [install.federation]
+    ask.en = "Enable Matrix federation?"
+    ask.fr = "Activer la fédération Matrix ?"
+    help.en = "Federation lets your server communicate with other Matrix homeservers. Requires port 443 to be reachable from the internet (YunoHost already exposes it). Disable only if you want a standalone server."
+    help.fr = "La fédération permet à votre serveur de communiquer avec les autres serveurs Matrix. Nécessite que le port 443 soit joignable depuis internet (déjà exposé par YunoHost). Désactiver uniquement pour un serveur isolé."
+    type = "boolean"
+    default = true
+
+[resources]
+    [resources.sources]
+        [resources.sources.main]
+        in_subdir = false
+        extract = false
+        rename = "continuwuity"
+        amd64.url = "https://forgejo.ellis.link/continuwuation/continuwuity/releases/download/v26.6.2/conduwuit-linux-static-amd64"
+        amd64.sha256 = "a4f697116fc05bc66e91815522e207932abbefb932c914a9e87964229ce2d4d5"
+        arm64.url = "https://forgejo.ellis.link/continuwuation/continuwuity/releases/download/v26.6.2/conduwuit-linux-static-arm64"
+        arm64.sha256 = "bbb17b2eb68347da90317c602eaa2fe5f0e6b7e1450547b2ab1ce997fe57f236"
+        autoupdate.strategy = "latest_forgejo_release"
+        autoupdate.asset.amd64 = "^conduwuit-linux-static-amd64$"
+        autoupdate.asset.arm64 = "^conduwuit-linux-static-arm64$"
+        autoupdate.version_regex = "^v(.*)$"
+
+    [resources.system_user]
+
+    [resources.install_dir]
+    owner = "__APP__:rwx"
+    group = "__APP__:rx"
+
+    [resources.data_dir]
+    owner = "__APP__:rwx"
+    group = "__APP__:rx"
+
+    [resources.permissions]
+    main.url = "/"
+    main.show_tile = false
+
+    server_api.url = "__DOMAIN__/_matrix"
+    server_api.label = "Server access for client apps."
+    server_api.show_tile = false
+    server_api.allowed = "visitors"
+    server_api.auth_header = false
+    server_api.protected = true
+
+    server_client_infos.url = "__SERVER_NAME__/.well-known/matrix"
+    server_client_infos.label = "Server info for federation (.well-known)"
+    server_client_infos.show_tile = false
+    server_client_infos.allowed = "visitors"
+    server_client_infos.auth_header = false
+    server_client_infos.protected = true
+
+    [resources.ports]
+    main.default = 6167

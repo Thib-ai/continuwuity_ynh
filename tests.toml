@@ -1,0 +1,24 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/tests.v1.schema.json
+
+test_format = 1.0
+
+[default]
+
+    # Continuwuity is a Matrix homeserver and must be installed at the root of a
+    # dedicated domain, so we only test the root install scenario and a
+    # delegated server_name scenario. Subpath installs are not supported.
+    exclude = ["install.subdir", "install.private"]
+
+    # -------------------------------
+    # Default args to use for install
+    # -------------------------------
+    # server_name defaults to the install domain ($domain). The CI fills in
+    # `domain`, `init_main_permission`, and booleans automatically.
+
+    # -------------------------------
+    # Commits to test upgrade from
+    # -------------------------------
+    # No previous YunoHost releases of continuwuity exist yet. Add entries
+    # here once older ynh versions are published, e.g.:
+    # test_upgrade_from.<sha>.name = "Upgrade from 26.6.2~ynh1"
+    # test_upgrade_from.<sha>.args.server_name = "domain.tld"
