@@ -40,7 +40,11 @@ set__allow_registration() {
         if [ -z "$current_token" ]; then
             current_token=$(ynh_string_random --length=27)
             ynh_app_setting_set --key=registration_token --value="$current_token"
-            # Write it to the TOML file too.
+            # Write the token to the TOML file. The embedded double quotes are
+            # intentional: TOML string values must be quoted, and
+            # ynh_write_var_in_file does line-based key=value replacement
+            # without adding quotes itself. We're replacing a string with a
+            # string (same type), so this is safe.
             ynh_write_var_in_file --file="$install_dir/continuwuity.toml" \
                 --key=registration_token --value="\"$current_token\""
         fi
