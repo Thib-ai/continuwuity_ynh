@@ -1,19 +1,52 @@
 # Continuwuity — post-install notes
 
-## Your registration token
+## Your registration token — important, read this first
 
-If you enabled registration, your registration token is:
+If you enabled registration, **the token printed in the install output is
+NOT the one you need for the first user.** On a fresh database, continuwuity
+ignores the `registration_token` from the config file and generates a
+fresh **ephemeral token** on every service start, printed in the journald
+startup banner. That ephemeral token is the only one that works to create
+the very first user (who becomes the admin). Once that first user exists,
+the config-file token becomes active again.
+
+The banner says it like this:
+
+> The registration token you set in your configuration will not function
+> until you create an account using the token above.
+
+To get the current ephemeral token:
+
+```bash
+sudo journalctl -u continuwuity.service -n 30 --no-pager | grep "registration token"
+```
+
+You'll see a line like:
 
 ```
-__REGISTRATION_TOKEN__
+Open your Matrix client of choice and register an account on __SERVER_NAME__ using the registration token Q7zi5UM3rhc7fFdQ . Pick your own username and password!
 ```
 
-Use a Matrix client (Element, FluffyChat, SchildiChat, etc.) to register on
-`https://__DOMAIN__` with this token. The first user you create becomes the
-instance's first admin.
+The token is the string between "registration token" and the period —
+`Q7zi5UM3rhc7fFdQ` in this example.
 
-If you did **not** enable registration, you can temporarily enable it later
-from the YunoHost config panel — a token will be generated automatically.
+**The ephemeral token rotates on every service restart** while the
+database has no users. If `systemctl restart continuwuity` runs (manually
+or via an upgrade), grab the new one from journald.
+
+## Registering the first user
+
+1. Open a Matrix client (Element, FluffyChat, SchildiChat, Cinny, …).
+2. Start creating a new account / sign up.
+3. Set the homeserver to `__SERVER_NAME__` (just the server_name, not the
+   full URL). The client will follow `.well-known` delegation and connect
+   to `https://__DOMAIN__` automatically. (If your client doesn't support
+   `.well-known`, use `https://__DOMAIN__` directly.)
+4. Pick a username and password.
+5. When asked for a registration token, paste the **ephemeral** token from
+   journald above — not the one printed in the install output.
+6. Complete registration. You are now `@yourusername:__SERVER_NAME__` and
+   the instance's first admin.
 
 ## Your Matrix IDs
 
@@ -45,3 +78,4 @@ sudo journalctl -u continuwuity.service -f
 ```bash
 sudo yunohost app config continuwuity
 ```
+

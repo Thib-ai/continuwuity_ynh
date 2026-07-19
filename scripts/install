@@ -85,8 +85,32 @@ ynh_systemctl --service="$app" --action="start" --log_path="systemd"
 ynh_script_progression "Installation of $app completed"
 
 if [ "$allow_registration" = "true" ]; then
-    ynh_print_info "Registration token: $registration_token"
-    ynh_print_info "Use a Matrix client to register on https://$domain with this token. The first user registered becomes the admin."
+    # On a fresh database, continuwuity IGNORES the registration_token from
+    # the config file and prints a fresh ephemeral "first user" token in
+    # the journald startup banner on every start. That ephemeral token is
+    # the only one that works to register the very first user. Once the
+    # first user exists, the config-file token becomes active again.
+    # See upstream banner: "The registration token you set in your
+    # configuration will not function until you create an account using
+    # the token above."
+    ephemeral_token=$(journalctl -u "$app.service" -n 50 --no-pager \
+        | grep -oP "registration token \K[^ ]+(?= \.)" | tail -1)
+
+    ynh_print_info "Registration token (for the FIRST user — required to bootstrap the admin):"
+    if [ -n "$ephemeral_token" ]; then
+        ynh_print_info "  $ephemeral_token"
+        ynh_print_info "  This token is rotated on every service restart while the database has no users."
+        ynh_print_info "  If the service has restarted since, get the latest one with:"
+        ynh_print_info "    sudo journalctl -u $app.service -n 30 --no-pager | grep 'registration token'"
+    else
+        ynh_print_info "  $registration_token"
+        ynh_print_info "  (Could not read the ephemeral token from journald — this is the config-file token,"
+        ynh_print_info "   which works once at least one user exists. If no user exists yet, check the"
+        ynh_print_info "   startup banner: sudo journalctl -u $app.service -n 30 --no-pager | grep 'registration token')"
+    fi
+    ynh_print_info "Then in your Matrix client (e.g. Element), set the homeserver to https://$domain"
+    ynh_print_info "(or just '$server_name' — .well-known delegation will resolve it),"
+    ynh_print_info "pick a username/password, and paste the token when prompted. The first user becomes the admin."
 else
     ynh_print_info "Registration is disabled. Use the admin room to create users. See upstream docs: https://continuwuity.org/"
 fi

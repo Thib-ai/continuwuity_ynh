@@ -263,10 +263,27 @@ landing page to anyone hitting the domain root. Keep the current pattern.
 
 ### Post-install message with the registration token
 
-`scripts/install` prints the registration token with `ynh_print_info` at
-the end of the install. This is the only place the user sees it in clear
-(they can also find it later in the config panel). If you change the
-install flow, make sure this still works — users will rely on it.
+`scripts/install` prints a registration token with `ynh_print_info` at
+the end of the install. **Important upstream quirk:** on a fresh database,
+continuwuity **ignores** the `registration_token` from the config file and
+generates a fresh ephemeral token on every service start, printed in the
+journald startup banner. That ephemeral token is the only one that works
+to register the very first user (who becomes the admin). The config-file
+token only becomes active once at least one user exists.
+
+So the install script deliberately does NOT print the config-file token
+as "the token to use" — it scrapes the ephemeral token from journald and
+prints that, with instructions to re-scrape it from `journalctl` if the
+service has restarted. If you change the install flow, make sure this
+still works — users will hit exactly the failure the user originally
+reported ("generic error" trying to register with the dormant
+config-file token) if you revert to printing the config token directly.
+
+The relevant upstream banner is:
+```
+The registration token you set in your configuration will not function
+until you create an account using the token above.
+```
 
 ### `conduwuit` vs `continuwuity` naming
 
