@@ -10,6 +10,8 @@ User=__APP__
 Group=__APP__
 Environment="CONTINUWUITY_CONFIG=__INSTALL_DIR__/continuwuity.toml"
 Environment="CONTINUWUITY_DATABASE_PATH=__DATA_DIR__"
+Environment="CONTINUWUITY_LOG_TO_JOURNALD=true"
+Environment="CONTINUWUITY_JOURNALD_IDENTIFIER=%N"
 WorkingDirectory=__INSTALL_DIR__/
 ExecStart=__INSTALL_DIR__/continuwuity --config __INSTALL_DIR__/continuwuity.toml
 Restart=on-failure
