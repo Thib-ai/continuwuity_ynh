@@ -56,9 +56,17 @@ allow_federation = __ALLOW_FEDERATION__
 # room, or `journalctl -u __APP__.service` for logs.
 admin_console_automatic = false
 
-# Continuwuity can serve .well-known delegation itself, but YunoHost serves
-# these via nginx (see /etc/nginx/conf.d/$server_name.d/__APP___server_name.conf).
-# Leave this section disabled.
-#[global.well_known]
-#server = "__DOMAIN__:443"
-#client = "https://__DOMAIN__"
+# Continuwuity can serve .well-known/matrix/{server,client,support} itself, but
+# YunoHost serves those via nginx on the server_name domain (see
+# /etc/nginx/conf.d/$server_name.d/${app}_server_name.conf), so we leave the
+# `server` key unset here.
+#
+# We DO set `client` (pointing at the install domain) so that continuwuity
+# advertises the install domain as the base for OAuth-compatible client
+# endpoints (/_continuwuity/, /.well-known/openid-configuration). Those endpoints
+# are only reverse-proxied on the install domain, not on the server_name
+# domain, so advertising the install domain here is required for webclients
+# (e.g. Sable, Element Web) to reach them. This also keeps working if the
+# server_name domain is later moved off this YunoHost instance.
+[global.well_known]
+client = "https://__DOMAIN__"

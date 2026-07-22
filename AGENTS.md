@@ -91,9 +91,12 @@ When a new Continuwuity release comes out (e.g. `v27.0.0`):
    - new security-relevant defaults (registration, federation, URL previews)
    - renamed config keys (continuwuity occasionally renames things — check
      `CHANGELOG.md` for `BREAKING`/`rename` entries)
-   - sections like `[global.well_known]`, `[global.smtp]`, `[global.oauth]`
-     that this package intentionally leaves disabled — make sure they are
-     still disabled the same way.
+   - sections like `[global.smtp]`, `[global.oauth]` that this package
+     intentionally leaves disabled — make sure they are still disabled the
+     same way. Note: `[global.well_known].client` IS set (to the install
+     domain) so OAuth-compatible webclients can reach `/_continuwuity` on the
+     install domain; don't remove it without reworking where `/_continuwuity`
+     is reverse-proxied.
    - Also bump the literal version string in the comment header of
      `conf/continuwuity.toml` (the line starting with
      `# Generated from conduwuit-example.toml of continuwuity vX.Y.Z`).
