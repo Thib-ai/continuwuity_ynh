@@ -7,7 +7,7 @@ name = "Continuwuity"
 description.en = "Community-driven Matrix homeserver in Rust, continuation of conduwuit"
 description.fr = "Serveur Matrix écrit en Rust, continuation de conduwuit, maintenue par la communauté"
 
-version = "26.6.2~ynh1"
+version = "26.7.1~ynh1"
 
 maintainers = ["thibaultmol"]
 
@@ -70,10 +70,10 @@ ram.runtime = "200M"
         in_subdir = false
         extract = false
         rename = "continuwuity"
-        amd64.url = "https://forgejo.ellis.link/continuwuation/continuwuity/releases/download/v26.6.2/conduwuit-linux-static-amd64"
-        amd64.sha256 = "a4f697116fc05bc66e91815522e207932abbefb932c914a9e87964229ce2d4d5"
-        arm64.url = "https://forgejo.ellis.link/continuwuation/continuwuity/releases/download/v26.6.2/conduwuit-linux-static-arm64"
-        arm64.sha256 = "bbb17b2eb68347da90317c602eaa2fe5f0e6b7e1450547b2ab1ce997fe57f236"
+        amd64.url = "https://forgejo.ellis.link/continuwuation/continuwuity/releases/download/v26.7.1/conduwuit-linux-static-amd64"
+        amd64.sha256 = "d7fb2ccac79852f570f719ab763763ad41a8f4927ffab24ec7f32e8a18f02e91"
+        arm64.url = "https://forgejo.ellis.link/continuwuation/continuwuity/releases/download/v26.7.1/conduwuit-linux-static-arm64"
+        arm64.sha256 = "84d429f25d609665c95b007db6930f711cb821b16fc64a4969d11e4b17417335"
         autoupdate.strategy = "latest_forgejo_release"
         autoupdate.asset.amd64 = "^conduwuit-linux-static-amd64$"
         autoupdate.asset.arm64 = "^conduwuit-linux-static-arm64$"

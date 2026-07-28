@@ -3,6 +3,7 @@
 # commit them.
 /continuwuity/
 /yunohost-doc-reference/
+/yunohost/
 /conduit_ynh/
 /synapse_ynh/
 /tuwunel_ynh/
@@ -12,3 +13,7 @@
 /.manifest.v2.schema.json
 /.tests.v1.schema.json
 /.spdx_licenses
+
+# Local Python env for running package_linter (see shell.nix)
+/shell.nix
+/.venv/
