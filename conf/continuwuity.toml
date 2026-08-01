@@ -3,7 +3,7 @@
 #  Do not edit by hand — use the YunoHost config panel or `yunohost app config`.
 #  Manual edits will be preserved on upgrade only if the file checksum changes,
 #  in which case the new upstream defaults will NOT be applied automatically.
-#  Generated from conduwuit-example.toml of continuwuity v26.7.1.
+#  Generated from conduwuit-example.toml of continuwuity v26.7.2.
 # =============================================================================
 
 [global]
