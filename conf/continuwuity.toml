@@ -3,7 +3,7 @@
 #  Do not edit by hand — use the YunoHost config panel or `yunohost app config`.
 #  Manual edits will be preserved on upgrade only if the file checksum changes,
 #  in which case the new upstream defaults will NOT be applied automatically.
-#  Generated from conduwuit-example.toml of continuwuity v26.8.1.
+#  Generated from conduwuit-example.toml of continuwuity v26.9.0.
 # =============================================================================
 
 [global]
@@ -37,6 +37,11 @@ registration_token = "__REGISTRATION_TOKEN__"
 
 # controls whether federation is allowed or not. defaults to true.
 allow_federation = __ALLOW_FEDERATION__
+
+# Legacy unauthenticated media endpoints are disabled since v26.9.0
+# (upstream flipped the default from true to false to stop homeservers
+# becoming unwitting CDNs). Leave disabled — authenticated media works fine.
+#allow_legacy_media = false
 
 # Controls whether users are allowed to create rooms. Default true.
 # appservices and admins are always allowed to create rooms.
